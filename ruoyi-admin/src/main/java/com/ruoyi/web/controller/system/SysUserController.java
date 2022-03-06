@@ -33,7 +33,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -59,6 +59,14 @@ public class SysUserController extends BaseController
         startPage();
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:user:listTeacher')")
+    @GetMapping("/listTeacher")
+    public AjaxResult listTeacher(SysUser user)
+    {
+        List<SysUser> list = userService.listTeacher(user);
+        return AjaxResult.success(getDataTable(list));
     }
 
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)

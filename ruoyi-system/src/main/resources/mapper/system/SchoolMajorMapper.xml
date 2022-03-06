@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SchoolMajorMapper">
+    
+    <resultMap type="SchoolMajor" id="SchoolMajorResult">
+        <result property="majorId"    column="major_id"    />
+        <result property="majorName"    column="major_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSchoolMajorVo">
+        select major_id, major_name, create_by, create_time, update_by, update_time, remark from school_major
+    </sql>
+
+    <select id="selectSchoolMajorList" parameterType="SchoolMajor" resultMap="SchoolMajorResult">
+        <include refid="selectSchoolMajorVo"/>
+        <where>  
+            <if test="majorName != null  and majorName != ''"> and major_name like concat('%', #{majorName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSchoolMajorByMajorId" parameterType="Long" resultMap="SchoolMajorResult">
+        <include refid="selectSchoolMajorVo"/>
+        where major_id = #{majorId}
+    </select>
+        
+    <insert id="insertSchoolMajor" parameterType="SchoolMajor" useGeneratedKeys="true" keyProperty="majorId">
+        insert into school_major
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="majorName != null and majorName != ''">major_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="majorName != null and majorName != ''">#{majorName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolMajor" parameterType="SchoolMajor">
+        update school_major
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="majorName != null and majorName != ''">major_name = #{majorName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where major_id = #{majorId}
+    </update>
+
+    <delete id="deleteSchoolMajorByMajorId" parameterType="Long">
+        delete from school_major where major_id = #{majorId}
+    </delete>
+
+    <delete id="deleteSchoolMajorByMajorIds" parameterType="String">
+        delete from school_major where major_id in 
+        <foreach item="majorId" collection="array" open="(" separator="," close=")">
+            #{majorId}
+        </foreach>
+    </delete>
+</mapper>
