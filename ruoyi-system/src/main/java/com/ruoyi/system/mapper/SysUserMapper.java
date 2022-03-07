@@ -21,6 +21,8 @@ public interface SysUserMapper
 
     public List<SysUser> teacherList(SysUser sysUser);
 
+    public List<SysUser> studentList(SysUser sysUser);
+
     /**
      * 根据条件分页查询已配用户角色列表
      *

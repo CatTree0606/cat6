@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SchoolClassMapper">
+
+    <resultMap type="SchoolClass" id="SchoolClassResult">
+        <result property="classId"    column="class_id"    />
+        <result property="className"    column="class_name"    />
+        <result property="teacherUserId"    column="teacher_user_id"    />
+        <result property="teacherUserName"    column="teacher_user_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSchoolClassVo">
+        select class_id, class_name, teacher_user_id, teacher_user_name, create_by, create_time, update_by, update_time, remark from school_class
+    </sql>
+
+    <select id="selectSchoolClassList" parameterType="SchoolClass" resultMap="SchoolClassResult">
+        <include refid="selectSchoolClassVo"/>
+        <where>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="teacherUserId != null "> and teacher_user_id = #{teacherUserId}</if>
+            <if test="teacherUserName != null  and teacherUserName != ''"> and teacher_user_name like concat('%', #{teacherUserName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="querySchoolClassListByUserId" parameterType="SchoolClass" resultMap="SchoolClassResult">
+        SELECT * FROM school_class WHERE class_id in (SELECT class_id FROM school_class_user WHERE user_id = #{userId})
+    </select>
+
+    <select id="selectSchoolClassByClassId" parameterType="Long" resultMap="SchoolClassResult">
+        <include refid="selectSchoolClassVo"/>
+        where class_id = #{classId}
+    </select>
+
+    <insert id="insertSchoolClass" parameterType="SchoolClass" useGeneratedKeys="true" keyProperty="classId">
+        insert into school_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="className != null">class_name,</if>
+            <if test="teacherUserId != null">teacher_user_id,</if>
+            <if test="teacherUserName != null">teacher_user_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="className != null">#{className},</if>
+            <if test="teacherUserId != null">#{teacherUserId},</if>
+            <if test="teacherUserName != null">#{teacherUserName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolClass" parameterType="SchoolClass">
+        update school_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="className != null">class_name = #{className},</if>
+            <if test="teacherUserId != null">teacher_user_id = #{teacherUserId},</if>
+            <if test="teacherUserName != null">teacher_user_name = #{teacherUserName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where class_id = #{classId}
+    </update>
+
+    <delete id="deleteSchoolClassByClassId" parameterType="Long">
+        delete from school_class where class_id = #{classId}
+    </delete>
+
+    <delete id="deleteSchoolClassByClassIds" parameterType="String">
+        delete from school_class where class_id in
+        <foreach item="classId" collection="array" open="(" separator="," close=")">
+            #{classId}
+        </foreach>
+    </delete>
+</mapper>

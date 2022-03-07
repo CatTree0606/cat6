@@ -78,7 +78,13 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> listTeacher(SysUser user) {
 
-        return userMapper.teacherList(user);
+        List<SysUser> users;
+        if(StringUtils.isNotBlank(user.getStudent())){
+            users = userMapper.studentList(user);
+        }else {
+            users = userMapper.teacherList(user);
+        }
+        return users;
     }
 
     /**
