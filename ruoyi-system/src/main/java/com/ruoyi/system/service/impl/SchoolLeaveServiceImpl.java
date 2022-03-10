@@ -72,6 +72,13 @@ public class SchoolLeaveServiceImpl implements ISchoolLeaveService
         return schoolLeaveMapper.selectSchoolLeaveList(schoolLeave);
     }
 
+    @Override
+    public List<SchoolLeave> selectSchoolLeaveListByTeacher(SchoolLeave schoolLeave) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        schoolLeave.setTeacherUserId(loginUser.getUserId());
+        return schoolLeaveMapper.selectSchoolLeaveList(schoolLeave);
+    }
+
     /**
      * 新增请假信息
      *

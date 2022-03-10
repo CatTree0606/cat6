@@ -37,7 +37,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 查询班级学生关联列表
      */
-    @PreAuthorize("@ss.hasPermi('system:classuser:list')")
+//    @PreAuthorize("@ss.hasPermi('system:classuser:list')")
     @GetMapping("/list")
     public TableDataInfo list(SchoolClassUser schoolClassUser)
     {
@@ -49,7 +49,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 导出班级学生关联列表
      */
-    @PreAuthorize("@ss.hasPermi('system:classuser:export')")
+//    @PreAuthorize("@ss.hasPermi('system:classuser:export')")
     @Log(title = "班级学生关联", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SchoolClassUser schoolClassUser)
@@ -62,7 +62,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 获取班级学生关联详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:classuser:query')")
+//    @PreAuthorize("@ss.hasPermi('system:classuser:query')")
     @GetMapping(value = "/{classId}")
     public AjaxResult getInfo(@PathVariable("classId") Long classId)
     {
@@ -72,7 +72,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 新增班级学生关联
      */
-    @PreAuthorize("@ss.hasPermi('system:user:add')")
+//    @PreAuthorize("@ss.hasPermi('system:user:add')")
     @Log(title = "班级学生关联", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SchoolClassUser schoolClassUser)
@@ -83,7 +83,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 修改班级学生关联
      */
-    @PreAuthorize("@ss.hasPermi('system:classuser:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:classuser:edit')")
     @Log(title = "班级学生关联", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SchoolClassUser schoolClassUser)
@@ -94,7 +94,7 @@ public class SchoolClassUserController extends BaseController
     /**
      * 删除班级学生关联
      */
-    @PreAuthorize("@ss.hasPermi('system:classuser:remove')")
+//    @PreAuthorize("@ss.hasPermi('system:classuser:remove')")
     @Log(title = "班级学生关联", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{classIds}")
     public AjaxResult remove(@PathVariable Long[] classIds)

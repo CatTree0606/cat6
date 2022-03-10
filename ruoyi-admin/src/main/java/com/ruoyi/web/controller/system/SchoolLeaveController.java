@@ -46,6 +46,14 @@ public class SchoolLeaveController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/listAudit")
+    public TableDataInfo listAudit(SchoolLeave schoolLeave)
+    {
+        startPage();
+        List<SchoolLeave> list = schoolLeaveService.selectSchoolLeaveListByTeacher(schoolLeave);
+        return getDataTable(list);
+    }
+
     /**
      * 导出请假信息列表
      */

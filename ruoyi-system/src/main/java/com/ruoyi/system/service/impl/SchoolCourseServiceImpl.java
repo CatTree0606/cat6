@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.SchoolCourseMajor;
 import com.ruoyi.system.domain.SchoolMajor;
 import com.ruoyi.system.mapper.SchoolCourseMajorMapper;
@@ -91,6 +93,8 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
     @Override
     public List<SchoolCourse> selectSchoolCourseList(SchoolCourse schoolCourse) {
 
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        schoolCourse.setTeacherUserId(loginUser.getUserId());
         List<SchoolCourse> schoolCourses = schoolCourseMapper.selectSchoolCourseList(schoolCourse);
         if (!CollectionUtils.isEmpty(schoolCourses)) {
             for (int i = 0; i < schoolCourses.size(); i++) {

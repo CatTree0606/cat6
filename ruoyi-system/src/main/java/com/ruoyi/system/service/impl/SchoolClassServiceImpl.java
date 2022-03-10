@@ -3,7 +3,9 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,8 @@ public class SchoolClassServiceImpl implements ISchoolClassService
     @Override
     public List<SchoolClass> selectSchoolClassList(SchoolClass schoolClass)
     {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        schoolClass.setTeacherUserId(loginUser.getUserId());
         return schoolClassMapper.selectSchoolClassList(schoolClass);
     }
 
