@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.BASE64Encoder;
@@ -15,24 +16,21 @@ public class LoginService {
     BaiduAIFace faceapi;
     @Autowired
     Setingmodel setingmodel;
-    public Map<String,Object> searchface(StringBuffer imagebase64) throws IOException {
+    public String searchface(StringBuffer imagebase64) throws IOException {
         String substring = imagebase64.substring(imagebase64.indexOf(",")+1, imagebase64.length());
         setingmodel.setImgpath(substring);
         setingmodel.setGroupID("login");
-
-        System.out.println(substring);
-        Map map = faceapi.FaceSearch(setingmodel);
-        return map;
+        return faceapi.FaceSearch(setingmodel);
 
     }
 
-    public Map<String,Object> registerFace(StringBuffer imagebase64) throws IOException {
+    public String registerFace(StringBuffer imagebase64) throws Exception {
         String substring = imagebase64.substring(imagebase64.indexOf(",")+1, imagebase64.length());
         setingmodel.setImgpath(substring);
         setingmodel.setGroupID("login");
-        setingmodel.setUserID("gangdan");
-        Map map = faceapi.FaceRegistration(setingmodel);
-        return map;
+        Long userId = SecurityUtils.getUserId();
+        setingmodel.setUserID(String.valueOf(userId));
+        return faceapi.FaceRegistration(setingmodel);
 
     }
 

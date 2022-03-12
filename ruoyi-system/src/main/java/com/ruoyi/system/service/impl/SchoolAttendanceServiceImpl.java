@@ -65,6 +65,7 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
      */
     @Override
     public List<SchoolAttendance> selectSchoolAttendanceList(SchoolAttendance schoolAttendance) {
+        schoolAttendance.setTeacherUserId(SecurityUtils.getLoginUser().getUserId());
         return schoolAttendanceMapper.selectSchoolAttendanceList(schoolAttendance);
     }
 
@@ -107,7 +108,7 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
         SchoolCourse schoolCourse = schoolCourseMapper.selectSchoolCourseByCourseId(schoolAttendance.getCourseId());
         schoolAttendance.setCourseName(schoolCourse.getCourseName());
         schoolAttendance.setTotalNumber(Long.valueOf(a));
-        schoolAttendance.setNoSignIn((long) 0);
+        schoolAttendance.setNoSignIn(Long.valueOf(a));
         schoolAttendance.setSignIn((long) 0);
         int i1 = schoolAttendanceMapper.insertSchoolAttendance(schoolAttendance);
 
@@ -119,6 +120,7 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
                 schoolAttendanceDetail.setStatus("未打卡");
                 schoolAttendanceDetail.setAttendanceId(schoolAttendance.getAttendanceId());
                 schoolAttendanceDetail.setCreateTime(new Date());
+                schoolAttendanceDetail.setTeacherUserId(schoolAttendance.getTeacherUserId());
                 schoolAttendanceDetailMapper.insertSchoolAttendanceDetail(schoolAttendanceDetail);
             });
         }
@@ -146,10 +148,12 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
     @Override
     public int deleteSchoolAttendanceByAttendanceIds(Long[] attendanceIds) {
         for (int i = 0; i < attendanceIds.length; i++) {
-            List<SchoolAttendanceDetail> schoolAttendanceDetails = schoolAttendanceDetailMapper.selectSchoolAttendanceDetailByAttendanceId(attendanceIds[i]);
+            SchoolAttendanceDetail schoolAttendanceDetail = new SchoolAttendanceDetail();
+            schoolAttendanceDetail.setAttendanceId(attendanceIds[i]);
+            List<SchoolAttendanceDetail> schoolAttendanceDetails = schoolAttendanceDetailMapper.selectSchoolAttendanceDetailList(schoolAttendanceDetail);
             if (!CollectionUtils.isEmpty(schoolAttendanceDetails)) {
-                List<Long> collect = schoolAttendanceDetails.stream().map(s -> s.getAttendanceId()).collect(Collectors.toList());
-                schoolAttendanceDetailMapper.deleteSchoolAttendanceDetailByAttendanceIds(collect.toArray(new Long[collect.size()]));
+                List<Long> collect = schoolAttendanceDetails.stream().map(s -> s.getId()).collect(Collectors.toList());
+                schoolAttendanceDetailMapper.deleteSchoolAttendanceDetailByIds(collect.toArray(new Long[collect.size()]));
             }
         }
         return schoolAttendanceMapper.deleteSchoolAttendanceByAttendanceIds(attendanceIds);

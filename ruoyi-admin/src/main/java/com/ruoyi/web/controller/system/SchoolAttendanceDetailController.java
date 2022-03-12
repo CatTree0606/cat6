@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 考勤明细Controller
  *
  * @author ruoyi
- * @date 2022-03-09
+ * @date 2022-03-11
  */
 @RestController
 @RequestMapping("/system/detail")
@@ -37,7 +37,7 @@ public class SchoolAttendanceDetailController extends BaseController
     /**
      * 查询考勤明细列表
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:list')")
+//    @PreAuthorize("@ss.hasPermi('system:detail:list')")
     @GetMapping("/list")
     public TableDataInfo list(SchoolAttendanceDetail schoolAttendanceDetail)
     {
@@ -49,7 +49,7 @@ public class SchoolAttendanceDetailController extends BaseController
     /**
      * 导出考勤明细列表
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:export')")
+//    @PreAuthorize("@ss.hasPermi('system:detail:export')")
     @Log(title = "考勤明细", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SchoolAttendanceDetail schoolAttendanceDetail)
@@ -62,17 +62,17 @@ public class SchoolAttendanceDetailController extends BaseController
     /**
      * 获取考勤明细详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:query')")
-    @GetMapping(value = "/{attendanceId}")
-    public AjaxResult getInfo(@PathVariable("attendanceId") Long attendanceId)
+//    @PreAuthorize("@ss.hasPermi('system:detail:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(schoolAttendanceDetailService.selectSchoolAttendanceDetailByAttendanceId(attendanceId));
+        return AjaxResult.success(schoolAttendanceDetailService.selectSchoolAttendanceDetailById(id));
     }
 
     /**
      * 新增考勤明细
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:add')")
+//    @PreAuthorize("@ss.hasPermi('system:detail:add')")
     @Log(title = "考勤明细", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SchoolAttendanceDetail schoolAttendanceDetail)
@@ -83,7 +83,7 @@ public class SchoolAttendanceDetailController extends BaseController
     /**
      * 修改考勤明细
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:detail:edit')")
     @Log(title = "考勤明细", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SchoolAttendanceDetail schoolAttendanceDetail)
@@ -94,11 +94,11 @@ public class SchoolAttendanceDetailController extends BaseController
     /**
      * 删除考勤明细
      */
-    @PreAuthorize("@ss.hasPermi('system:detail:remove')")
+//    @PreAuthorize("@ss.hasPermi('system:detail:remove')")
     @Log(title = "考勤明细", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{attendanceIds}")
-    public AjaxResult remove(@PathVariable Long[] attendanceIds)
+	@DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(schoolAttendanceDetailService.deleteSchoolAttendanceDetailByAttendanceIds(attendanceIds));
+        return toAjax(schoolAttendanceDetailService.deleteSchoolAttendanceDetailByIds(ids));
     }
 }

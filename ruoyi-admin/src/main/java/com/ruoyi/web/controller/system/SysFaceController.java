@@ -11,15 +11,19 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.ISysRoleService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.system.domain.SchoolAttendance;
+import com.ruoyi.system.domain.SchoolAttendanceDetail;
+import com.ruoyi.system.domain.SysUserFace;
+import com.ruoyi.system.service.*;
 import com.ruoyi.system.service.impl.GsonUtils;
 import com.ruoyi.system.service.impl.LoginService;
+import com.ruoyi.system.service.impl.SysUserFaceServiceImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.Security;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,37 +44,94 @@ import java.util.stream.Collectors;
  * @author ruoyi
  */
 @RestController
-@RequestMapping("/system/user")
-public class SysFaceController extends BaseController
-{
+@RequestMapping("/system/faceUser")
+public class SysFaceController extends BaseController {
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private ISysUserFaceService sysUserFaceService;
+    @Autowired
+    private ISchoolAttendanceDetailService schoolAttendanceDetailService;
+    @Autowired
+    private ISchoolAttendanceService schoolAttendanceService;
 
     //人脸新增
-    @PreAuthorize("@ss.hasPermi('system:user:registerFace')")
     @RequestMapping("/registerFace")
     @ResponseBody
-    public String registerFace(@RequestBody @RequestParam(name = "imagebast64") StringBuffer imagebast64, Model model, HttpServletRequest request) throws IOException {
-        Map<String, Object> searchface = loginService.registerFace(imagebast64);
-        if (searchface == null || searchface.get("user_id") == null) {
-            String flag = "fail";
-            String s = GsonUtils.toJson(flag);
-            return s;
+    public AjaxResult registerFace(@RequestBody @RequestParam(name = "imagebast64") StringBuffer imagebast64, Model model, HttpServletRequest request) throws IOException {
+        AjaxResult ajaxResult;
+        try {
+            SysUserFace sysUserFace = new SysUserFace();
+            sysUserFace.setUserId(SecurityUtils.getUserId());
+            List<SysUserFace> sysUserFaces = sysUserFaceService.selectSysUserFaceList(sysUserFace);
+            if (CollectionUtils.isEmpty(sysUserFaces)) {
+                String faceToken = loginService.registerFace(imagebast64);
+                sysUserFace.setFaceToken(faceToken);
+                sysUserFaceService.insertSysUserFace(sysUserFace);
+            }
+            ajaxResult = AjaxResult.success();
+        } catch (Exception e) {
+            ajaxResult = AjaxResult.error(e.getMessage());
         }
-        String user_id = searchface.get("user_id").toString();
-        String score = searchface.get("score").toString().substring(0, 2);
-        int i = Integer.parseInt(score);
-        if (i > 80) {
-            model.addAttribute("userinf", user_id);
-            HttpSession session = request.getSession();
-            session.setAttribute("userinf", user_id);
-            System.out.println("存入session");
+        return ajaxResult;
+    }
+
+    @GetMapping(value = "/{faceToken}")
+    public AjaxResult getInfo() {
+        SysUserFace sysUserFace = new SysUserFace();
+        sysUserFace.setUserId(SecurityUtils.getUserId());
+        List<SysUserFace> sysUserFaces = sysUserFaceService.selectSysUserFaceList(sysUserFace);
+        if (CollectionUtils.isEmpty(sysUserFaces)) {
+            return AjaxResult.error("未查询到人脸采样信息，请至个人中心录入人脸采样信息！");
         }
 
+        return AjaxResult.success();
+    }
 
-        System.out.println(searchface);
-        String s = GsonUtils.toJson(searchface);
-        return s;
+    //人脸识别
+    @RequestMapping("/signIn")
+    @ResponseBody
+    @Transactional
+    public AjaxResult searchFace(@RequestBody @RequestParam(name = "imagebast64") StringBuffer imagebast64,
+                                 @RequestParam(name = "id") Long id,
+                                 Model model,
+                                 HttpServletRequest request) throws IOException {
+        AjaxResult ajaxResult;
+        try {
+            SysUserFace sysUserFace = new SysUserFace();
+            sysUserFace.setUserId(SecurityUtils.getUserId());
+            List<SysUserFace> sysUserFaces = sysUserFaceService.selectSysUserFaceList(sysUserFace);
+            if (CollectionUtils.isEmpty(sysUserFaces)) {
+                ajaxResult = AjaxResult.error("未查询到人脸采样信息，请至个人中心录入人脸采样信息！");
+            } else {
+                String userId = loginService.searchface(imagebast64);
+                SysUserFace sysUserFace1 = sysUserFaces.get(0);
+                if (StringUtils.isNotBlank(userId) && userId.equals(String.valueOf(sysUserFace1.getUserId()))) {
+                    SchoolAttendanceDetail schoolAttendanceDetail = schoolAttendanceDetailService.selectSchoolAttendanceDetailById(id);
+                    SchoolAttendance schoolAttendance = schoolAttendanceService.selectSchoolAttendanceByAttendanceId(schoolAttendanceDetail.getAttendanceId());
+                    Date date = new Date();
+                    boolean b = schoolAttendance.getCourseStart().getTime() < date.getTime();
+                    schoolAttendanceDetail.setStatus("已签到");
+                    schoolAttendanceDetail.setSignTime(date);
+                    schoolAttendanceDetail.setIsLate(b ? "是" : "否");
+                    schoolAttendanceDetailService.updateSchoolAttendanceDetail(schoolAttendanceDetail);
+
+                    Long signIn = schoolAttendance.getSignIn();
+                    signIn = signIn + new Long(1);
+                    Long noSignIn = schoolAttendance.getNoSignIn();
+                    noSignIn = noSignIn - new Long(1);
+                    schoolAttendance.setSignIn(signIn);
+                    schoolAttendance.setNoSignIn(noSignIn);
+                    schoolAttendanceService.updateSchoolAttendance(schoolAttendance);
+                    ajaxResult = AjaxResult.success();
+                } else {
+                    ajaxResult = AjaxResult.error("人脸识别失败！");
+                }
+            }
+        } catch (Exception e) {
+            ajaxResult = AjaxResult.error(e.getMessage());
+        }
+        return ajaxResult;
     }
 
 }
