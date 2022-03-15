@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.CatTree.system.mapper.SysUserFaceMapper">
+
+    <resultMap type="SysUserFace" id="SysUserFaceResult">
+        <result property="userFaceId"    column="user_face_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="faceToken"    column="face_token"    />
+    </resultMap>
+
+    <sql id="selectSysUserFaceVo">
+        select user_face_id, user_id, face_token from sys_user_face
+    </sql>
+
+    <select id="selectSysUserFaceList" parameterType="SysUserFace" resultMap="SysUserFaceResult">
+        <include refid="selectSysUserFaceVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="faceToken != null  and faceToken != ''"> and face_token = #{faceToken}</if>
+        </where>
+    </select>
+
+    <select id="selectSysUserFaceByUserFaceId" parameterType="Long" resultMap="SysUserFaceResult">
+        <include refid="selectSysUserFaceVo"/>
+        where user_face_id = #{userFaceId}
+    </select>
+
+    <insert id="insertSysUserFace" parameterType="SysUserFace" useGeneratedKeys="true" keyProperty="userFaceId">
+        insert into sys_user_face
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="faceToken != null">face_token,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="faceToken != null">#{faceToken},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUserFace" parameterType="SysUserFace">
+        update sys_user_face
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="faceToken != null">face_token = #{faceToken},</if>
+        </trim>
+        where user_face_id = #{userFaceId}
+    </update>
+
+    <delete id="deleteSysUserFaceByUserFaceId" parameterType="Long">
+        delete from sys_user_face where user_face_id = #{userFaceId}
+    </delete>
+
+    <delete id="deleteSysUserFaceByUserFaceIds" parameterType="String">
+        delete from sys_user_face where user_face_id in
+        <foreach item="userFaceId" collection="array" open="(" separator="," close=")">
+            #{userFaceId}
+        </foreach>
+    </delete>
+</mapper>

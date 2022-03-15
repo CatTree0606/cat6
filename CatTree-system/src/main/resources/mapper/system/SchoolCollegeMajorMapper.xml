@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.CatTree.system.mapper.SchoolCollegeMajorMapper">
+
+    <resultMap type="SchoolCollegeMajor" id="SchoolCollegeMajorResult">
+        <result property="collegeId"    column="college_id"    />
+        <result property="majorId"    column="major_id"    />
+    </resultMap>
+
+    <sql id="selectSchoolCollegeMajorVo">
+        select college_id, major_id from school_college_major
+    </sql>
+
+    <select id="selectSchoolCollegeMajorList" parameterType="SchoolCollegeMajor" resultMap="SchoolCollegeMajorResult">
+        <include refid="selectSchoolCollegeMajorVo"/>
+        <where>
+        </where>
+    </select>
+
+    <select id="selectSchoolCollegeMajorByCollegeId" parameterType="Long" resultMap="SchoolCollegeMajorResult">
+        <include refid="selectSchoolCollegeMajorVo"/>
+        where college_id = #{collegeId}
+    </select>
+
+    <insert id="insertSchoolCollegeMajor" parameterType="SchoolCollegeMajor">
+        insert into school_college_major
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collegeId != null">college_id,</if>
+            <if test="majorId != null">major_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="majorId != null">#{majorId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolCollegeMajor" parameterType="SchoolCollegeMajor">
+        update school_college_major
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="majorId != null">major_id = #{majorId},</if>
+        </trim>
+        where college_id = #{collegeId}
+    </update>
+
+    <delete id="deleteSchoolCollegeMajorByCollegeId" parameterType="Long">
+        delete from school_college_major where college_id = #{collegeId}
+    </delete>
+
+    <delete id="deleteSchoolCollegeMajorByCollegeIds" parameterType="String">
+        delete from school_college_major where college_id in
+        <foreach item="collegeId" collection="array" open="(" separator="," close=")">
+            #{collegeId}
+        </foreach>
+    </delete>
+</mapper>

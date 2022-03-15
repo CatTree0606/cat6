@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.CatTree.system.mapper.SchoolLeaveMapper">
+
+    <resultMap type="SchoolLeave" id="SchoolLeaveResult">
+        <result property="leaveId"    column="leave_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="leaveText"    column="leave_text"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="teacherUserId"    column="teacher_user_id"    />
+        <result property="teacherUseName"    column="teacher_use_name"    />
+        <result property="auditResult"    column="audit_result"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSchoolLeaveVo">
+        select leave_id, user_id, user_name, leave_text, start_time, end_time, teacher_user_id, teacher_use_name, audit_result, create_by, create_time, update_by, update_time, remark from school_leave
+    </sql>
+
+    <select id="selectSchoolLeaveList" parameterType="SchoolLeave" resultMap="SchoolLeaveResult">
+        <include refid="selectSchoolLeaveVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="leaveText != null  and leaveText != ''"> and leave_text = #{leaveText}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="teacherUserId != null "> and teacher_user_id = #{teacherUserId}</if>
+            <if test="teacherUseName != null  and teacherUseName != ''"> and teacher_use_name like concat('%', #{teacherUseName}, '%')</if>
+            <if test="auditResult != null  and auditResult != ''"> and audit_result = #{auditResult}</if>
+        </where>
+    </select>
+
+    <select id="selectSchoolLeaveByLeaveId" parameterType="Long" resultMap="SchoolLeaveResult">
+        <include refid="selectSchoolLeaveVo"/>
+        where leave_id = #{leaveId}
+    </select>
+
+    <insert id="insertSchoolLeave" parameterType="SchoolLeave" useGeneratedKeys="true" keyProperty="leaveId">
+        insert into school_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="leaveText != null">leave_text,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="teacherUserId != null">teacher_user_id,</if>
+            <if test="teacherUseName != null">teacher_use_name,</if>
+            <if test="auditResult != null">audit_result,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="leaveText != null">#{leaveText},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="teacherUserId != null">#{teacherUserId},</if>
+            <if test="teacherUseName != null">#{teacherUseName},</if>
+            <if test="auditResult != null">#{auditResult},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolLeave" parameterType="SchoolLeave">
+        update school_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="leaveText != null">leave_text = #{leaveText},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="teacherUserId != null">teacher_user_id = #{teacherUserId},</if>
+            <if test="teacherUseName != null">teacher_use_name = #{teacherUseName},</if>
+            <if test="auditResult != null">audit_result = #{auditResult},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where leave_id = #{leaveId}
+    </update>
+
+    <delete id="deleteSchoolLeaveByLeaveId" parameterType="Long">
+        delete from school_leave where leave_id = #{leaveId}
+    </delete>
+
+    <delete id="deleteSchoolLeaveByLeaveIds" parameterType="String">
+        delete from school_leave where leave_id in
+        <foreach item="leaveId" collection="array" open="(" separator="," close=")">
+            #{leaveId}
+        </foreach>
+    </delete>
+</mapper>

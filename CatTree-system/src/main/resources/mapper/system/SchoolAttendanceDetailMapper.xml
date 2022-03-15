@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.CatTree.system.mapper.SchoolAttendanceDetailMapper">
+
+    <resultMap type="SchoolAttendanceDetail" id="SchoolAttendanceDetailResult">
+        <result property="id"    column="id"    />
+        <result property="attendanceId"    column="attendance_id"    />
+        <result property="teacherUserId"    column="teacher_user_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="status"    column="status"    />
+        <result property="isLate"    column="is_late"    />
+        <result property="signTime"    column="sign_time"    />
+        <result property="signType"    column="sign_type"    />
+        <result property="signOut"    column="sign_out"    />
+        <result property="signOutTime"    column="sign_out_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSchoolAttendanceDetailVo">
+        select id, attendance_id, teacher_user_id, user_id, status, is_late, sign_time, sign_type, sign_out, sign_out_time, create_time from school_attendance_detail
+    </sql>
+
+    <select id="selectSchoolAttendanceDetailList" parameterType="SchoolAttendanceDetail" resultMap="SchoolAttendanceDetailResult">
+        <include refid="selectSchoolAttendanceDetailVo"/>
+        <where>
+            <if test="attendanceId != null "> and attendance_id = #{attendanceId}</if>
+            <if test="teacherUserId != null "> and teacher_user_id = #{teacherUserId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="isLate != null  and isLate != ''"> and is_late = #{isLate}</if>
+            <if test="signTime != null "> and sign_time = #{signTime}</if>
+            <if test="signType != null  and signType != ''"> and sign_type = #{signType}</if>
+            <if test="signOut != null  and signOut != ''"> and sign_out = #{signOut}</if>
+            <if test="signOutTime != null "> and sign_out_time = #{signOutTime}</if>
+        </where>
+    </select>
+
+    <select id="selectSchoolAttendanceDetailById" parameterType="Long" resultMap="SchoolAttendanceDetailResult">
+        <include refid="selectSchoolAttendanceDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSchoolAttendanceDetail" parameterType="SchoolAttendanceDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into school_attendance_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="attendanceId != null">attendance_id,</if>
+            <if test="teacherUserId != null">teacher_user_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="status != null">status,</if>
+            <if test="isLate != null">is_late,</if>
+            <if test="signTime != null">sign_time,</if>
+            <if test="signType != null">sign_type,</if>
+            <if test="signOut != null">sign_out,</if>
+            <if test="signOutTime != null">sign_out_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="attendanceId != null">#{attendanceId},</if>
+            <if test="teacherUserId != null">#{teacherUserId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isLate != null">#{isLate},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="signType != null">#{signType},</if>
+            <if test="signOut != null">#{signOut},</if>
+            <if test="signOutTime != null">#{signOutTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolAttendanceDetail" parameterType="SchoolAttendanceDetail">
+        update school_attendance_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="attendanceId != null">attendance_id = #{attendanceId},</if>
+            <if test="teacherUserId != null">teacher_user_id = #{teacherUserId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isLate != null">is_late = #{isLate},</if>
+            <if test="signTime != null">sign_time = #{signTime},</if>
+            <if test="signType != null">sign_type = #{signType},</if>
+            <if test="signOut != null">sign_out = #{signOut},</if>
+            <if test="signOutTime != null">sign_out_time = #{signOutTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSchoolAttendanceDetailById" parameterType="Long">
+        delete from school_attendance_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteSchoolAttendanceDetailByIds" parameterType="String">
+        delete from school_attendance_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
