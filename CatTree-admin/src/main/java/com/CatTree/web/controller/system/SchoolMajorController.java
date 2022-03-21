@@ -95,4 +95,5 @@ public class SchoolMajorController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] majorIds) {
         return toAjax(schoolMajorService.deleteSchoolMajorByMajorIds(majorIds));
     }
+
 }
