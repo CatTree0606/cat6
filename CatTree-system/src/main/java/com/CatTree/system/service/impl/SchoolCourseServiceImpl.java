@@ -59,7 +59,6 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
             schoolCourse.setTeacherList(sysUsers);
 
 
-
             List<SchoolCourseMajor> schoolCourseMajors = schoolCourseMajorMapper.selectSchoolCourseMajorByCourseId(courseId);
             if (!CollectionUtils.isEmpty(schoolCourseMajors)) {
                 List<SchoolMajor> list = Lists.newArrayList();
@@ -73,7 +72,7 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
             }
             //选中的老师
             SysUser sysUser = userService.selectUserById(schoolCourse.getTeacherUserId());
-            if(null != sysUser){
+            if (null != sysUser) {
                 schoolCourse.setTeacherUserId(sysUser.getUserId());
                 schoolCourse.setTeacherName(sysUser.getUserName());
             }
@@ -94,7 +93,11 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
     public List<SchoolCourse> selectSchoolCourseList(SchoolCourse schoolCourse) {
 
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        schoolCourse.setTeacherUserId(loginUser.getUserId());
+        Long userId = loginUser.getUserId();
+        if (userId != 1) {
+            schoolCourse.setTeacherUserId(loginUser.getUserId());
+        }
+
         List<SchoolCourse> schoolCourses = schoolCourseMapper.selectSchoolCourseList(schoolCourse);
         if (!CollectionUtils.isEmpty(schoolCourses)) {
             for (int i = 0; i < schoolCourses.size(); i++) {

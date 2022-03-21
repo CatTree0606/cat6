@@ -55,7 +55,11 @@ public class SchoolClassServiceImpl implements ISchoolClassService
     public List<SchoolClass> selectSchoolClassList(SchoolClass schoolClass)
     {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        schoolClass.setTeacherUserId(loginUser.getUserId());
+        Long userId = loginUser.getUserId();
+        if (userId != 1) {
+            schoolClass.setTeacherUserId(loginUser.getUserId());
+        }
+
         return schoolClassMapper.selectSchoolClassList(schoolClass);
     }
 

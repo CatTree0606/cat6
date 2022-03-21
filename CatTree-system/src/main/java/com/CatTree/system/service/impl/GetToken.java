@@ -33,9 +33,9 @@ public class GetToken {
          * "24.460da4889caad24cccdb1fea17221975.2592000.1491995545.282335-1234567"
          */
         public static String getAuth() {
-            String ak= "";
+            String ak= "bkFvlTDwUj6sERGDvvdozARn";
             // 官网获取的 Secret Key 更新为你注册的
-            String sk = "";
+            String sk = "rtX0RvQrXDbSoZSB2f9hABb6OZkhcwBx";
             // 获取token地址
             String authHost = "https://aip.baidubce.com/oauth/2.0/token?";
             String getAccessTokenUrl = authHost
