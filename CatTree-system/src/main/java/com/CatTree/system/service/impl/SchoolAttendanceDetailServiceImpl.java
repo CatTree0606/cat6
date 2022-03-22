@@ -10,6 +10,8 @@ import com.CatTree.common.core.domain.model.LoginUser;
 import com.CatTree.common.utils.DateUtils;
 import com.CatTree.common.utils.SecurityUtils;
 import com.CatTree.common.utils.StringUtils;
+import com.CatTree.system.domain.SchoolAttendance;
+import com.CatTree.system.mapper.SchoolAttendanceMapper;
 import com.CatTree.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class SchoolAttendanceDetailServiceImpl implements ISchoolAttendanceDetai
     private SchoolAttendanceDetailMapper schoolAttendanceDetailMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private SchoolAttendanceMapper schoolAttendanceMapper;
 
     /**
      * 查询考勤明细
@@ -76,6 +80,9 @@ public class SchoolAttendanceDetailServiceImpl implements ISchoolAttendanceDetai
                     schoolAttendanceDetails.get(i).setTeacherUserName(sysUser1.getUserName());
                 }
                 schoolAttendanceDetails.get(i).setIsTeacher(isTeacher);
+
+                SchoolAttendance schoolAttendance = schoolAttendanceMapper.selectSchoolAttendanceByAttendanceId(schoolAttendanceDetail1.getAttendanceId());
+                schoolAttendanceDetails.get(i).setCourseName(schoolAttendance.getCourseName());
 
             }
         }

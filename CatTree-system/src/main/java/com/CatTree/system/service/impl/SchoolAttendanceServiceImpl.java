@@ -34,12 +34,11 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
 
 
     @Autowired
-    private SchoolClassMapper schoolClassMapper;
-
-    @Autowired
-    private SchoolClassUserMapper schoolClassUserMapper;
-    @Autowired
     private SchoolCourseMapper schoolCourseMapper;
+    @Autowired
+    private SchoolCourseMajorMapper courseMajorMapper;
+    @Autowired
+    private SchoolMajorUserMapper majorUserMapper;
 
     /**
      * 查询考勤
@@ -83,48 +82,34 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         schoolAttendance.setTeacherUserId(loginUser.getUserId());
 
-        //查询老师关联的班级的学生数
-        SchoolClass schoolClass = new SchoolClass();
-        schoolClass.setTeacherUserId(loginUser.getUserId());
-        List<SchoolClass> schoolClasses = schoolClassMapper.selectSchoolClassList(schoolClass);
-        int a = 0;
-        List<SchoolClassUser> schoolClassUsers = Lists.newArrayList();
-        ArrayList<SchoolClassUser> collect = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(schoolClasses)) {
-            for (int i = 0; i < schoolClasses.size(); i++) {
-                SchoolClassUser schoolClassUser = new SchoolClassUser();
-                schoolClassUser.setClassId(schoolClasses.get(i).getClassId());
-                schoolClassUsers = schoolClassUserMapper.selectSchoolClassUserList(schoolClassUser);
+        //根据课程查询课程专业
+        SchoolCourseMajor schoolCourseMajors = courseMajorMapper.selectSchoolCourseMajorByCourseId(schoolAttendance.getCourseId());
+        if (null != schoolCourseMajors) {
+            //根据专业查询学生
+            List<SchoolMajorUser> schoolMajorUsers = majorUserMapper.selectSchoolMajorUserByMajorId(schoolCourseMajors.getMajorId());
+            if (!CollectionUtils.isEmpty(schoolMajorUsers)) {
+                SchoolCourse schoolCourse = schoolCourseMapper.selectSchoolCourseByCourseId(schoolAttendance.getCourseId());
+                schoolAttendance.setCourseName(schoolCourse.getCourseName());
+                schoolAttendance.setTotalNumber(Long.valueOf(schoolMajorUsers.size()));
+                schoolAttendance.setNoSignIn(Long.valueOf(schoolMajorUsers.size()));
+                schoolAttendance.setSignIn((long) 0);
+                schoolAttendanceMapper.insertSchoolAttendance(schoolAttendance);
 
-                if (!CollectionUtils.isEmpty(schoolClassUsers)) {
-                    collect = schoolClassUsers.stream().collect(
-                            collectingAndThen(
-                                    toCollection(() -> new TreeSet<>(comparingLong(SchoolClassUser::getUserId))), ArrayList::new)
-                    );
-                    a = collect.size();
-                }
+
+                schoolMajorUsers.stream().forEach(s -> {
+                    SchoolAttendanceDetail schoolAttendanceDetail = new SchoolAttendanceDetail();
+                    schoolAttendanceDetail.setUserId(s.getUserId());
+                    schoolAttendanceDetail.setStatus("未打卡");
+                    schoolAttendanceDetail.setAttendanceId(schoolAttendance.getAttendanceId());
+                    schoolAttendanceDetail.setCreateTime(new Date());
+                    schoolAttendanceDetail.setTeacherUserId(schoolAttendance.getTeacherUserId());
+                    schoolAttendanceDetailMapper.insertSchoolAttendanceDetail(schoolAttendanceDetail);
+                });
+
             }
         }
-        SchoolCourse schoolCourse = schoolCourseMapper.selectSchoolCourseByCourseId(schoolAttendance.getCourseId());
-        schoolAttendance.setCourseName(schoolCourse.getCourseName());
-        schoolAttendance.setTotalNumber(Long.valueOf(a));
-        schoolAttendance.setNoSignIn(Long.valueOf(a));
-        schoolAttendance.setSignIn((long) 0);
-        int i1 = schoolAttendanceMapper.insertSchoolAttendance(schoolAttendance);
 
-
-        if (a > 0) {
-            collect.forEach(schoolClassUser -> {
-                SchoolAttendanceDetail schoolAttendanceDetail = new SchoolAttendanceDetail();
-                schoolAttendanceDetail.setUserId(schoolClassUser.getUserId());
-                schoolAttendanceDetail.setStatus("未打卡");
-                schoolAttendanceDetail.setAttendanceId(schoolAttendance.getAttendanceId());
-                schoolAttendanceDetail.setCreateTime(new Date());
-                schoolAttendanceDetail.setTeacherUserId(schoolAttendance.getTeacherUserId());
-                schoolAttendanceDetailMapper.insertSchoolAttendanceDetail(schoolAttendanceDetail);
-            });
-        }
-        return i1;
+        return 1;
     }
 
     /**

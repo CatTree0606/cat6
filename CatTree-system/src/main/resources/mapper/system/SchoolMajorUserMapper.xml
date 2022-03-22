@@ -48,6 +48,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from school_major_user where user_id = #{userId}
     </delete>
 
+    <delete id="deleteSchoolMajorUserByMajorId" parameterType="Long">
+        delete from school_major_user where major_id = #{majorId}
+    </delete>
+
     <delete id="deleteSchoolMajorUserByUserIds" parameterType="String">
         delete from school_major_user where user_id in
         <foreach item="userId" collection="array" open="(" separator="," close=")">

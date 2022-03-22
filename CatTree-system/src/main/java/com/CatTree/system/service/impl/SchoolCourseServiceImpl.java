@@ -59,16 +59,11 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
             schoolCourse.setTeacherList(sysUsers);
 
 
-            List<SchoolCourseMajor> schoolCourseMajors = schoolCourseMajorMapper.selectSchoolCourseMajorByCourseId(courseId);
-            if (!CollectionUtils.isEmpty(schoolCourseMajors)) {
-                List<SchoolMajor> list = Lists.newArrayList();
-                for (int i = 0; i < schoolCourseMajors.size(); i++) {
-                    SchoolMajor schoolMajor = schoolMajorMapper.selectSchoolMajorByMajorId(schoolCourseMajors.get(i).getMajorId());
-                    list.add(schoolMajor);
-                }
-                List<Long> collect = list.stream().map(SchoolMajor -> SchoolMajor.getMajorId()).collect(Collectors.toList());
+            SchoolCourseMajor schoolCourseMajors = schoolCourseMajorMapper.selectSchoolCourseMajorByCourseId(courseId);
+            if (null != schoolCourseMajors) {
+                SchoolMajor schoolMajor = schoolMajorMapper.selectSchoolMajorByMajorId(schoolCourseMajors.getMajorId());
                 //选中的专业
-                schoolCourse.setMajorId(collect.toArray(new Long[collect.size()]));
+                schoolCourse.setMajorId(schoolMajor.getMajorId());
             }
             //选中的老师
             SysUser sysUser = userService.selectUserById(schoolCourse.getTeacherUserId());
@@ -127,13 +122,11 @@ public class SchoolCourseServiceImpl implements ISchoolCourseService {
     }
 
     private void addCourseMajor(SchoolCourse schoolCourse) {
-        Long[] majorId = schoolCourse.getMajorId();
-        for (int i = 0; i < majorId.length; i++) {
-            SchoolCourseMajor schoolMajor = new SchoolCourseMajor();
-            schoolMajor.setMajorId(majorId[i]);
-            schoolMajor.setCourseId(schoolCourse.getCourseId());
-            schoolCourseMajorMapper.insertSchoolCourseMajor(schoolMajor);
-        }
+        Long majorId = schoolCourse.getMajorId();
+        SchoolCourseMajor schoolMajor = new SchoolCourseMajor();
+        schoolMajor.setMajorId(majorId);
+        schoolMajor.setCourseId(schoolCourse.getCourseId());
+        schoolCourseMajorMapper.insertSchoolCourseMajor(schoolMajor);
     }
 
     /**

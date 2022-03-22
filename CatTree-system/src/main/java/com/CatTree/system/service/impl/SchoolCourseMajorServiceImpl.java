@@ -26,7 +26,7 @@ public class SchoolCourseMajorServiceImpl implements ISchoolCourseMajorService
      * @return 课程专业关联
      */
     @Override
-    public List<SchoolCourseMajor> selectSchoolCourseMajorByCourseId(Long courseId)
+    public SchoolCourseMajor selectSchoolCourseMajorByCourseId(Long courseId)
     {
         return schoolCourseMajorMapper.selectSchoolCourseMajorByCourseId(courseId);
     }

@@ -20,6 +20,8 @@ public class SchoolAttendanceDetail extends BaseEntity
     /** 主键ID */
     private Long id;
 
+    //课程名称
+    private String courseName;
     /** 考勤ID */
     @Excel(name = "考勤ID")
     private Long attendanceId;
@@ -64,6 +66,13 @@ public class SchoolAttendanceDetail extends BaseEntity
 
     private int isTeacher;
 
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
 
     public int getIsTeacher() {
         return isTeacher;

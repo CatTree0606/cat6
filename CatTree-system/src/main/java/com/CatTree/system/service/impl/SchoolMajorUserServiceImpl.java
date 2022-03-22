@@ -68,6 +68,7 @@ public class SchoolMajorUserServiceImpl implements ISchoolMajorUserService {
     public int insertSchoolMajorUser(SchoolMajorUser schoolMajorUser) {
         Long[] userIds = schoolMajorUser.getUserIds();
         if (null != userIds && userIds.length > 0) {
+            int i1 = schoolMajorUserMapper.deleteSchoolMajorUserByMajorId(schoolMajorUser.getMajorId());
             for (int i = 0; i < userIds.length; i++) {
                 SchoolMajorUser user = new SchoolMajorUser();
                 user.setUserId(userIds[i]);

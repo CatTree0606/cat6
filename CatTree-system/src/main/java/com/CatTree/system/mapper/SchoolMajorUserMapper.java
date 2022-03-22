@@ -52,6 +52,8 @@ public interface SchoolMajorUserMapper
      */
     public int deleteSchoolMajorUserByUserId(Long userId);
 
+    int deleteSchoolMajorUserByMajorId(Long MajorId);
+
     /**
      * 批量删除课程专业关联
      *

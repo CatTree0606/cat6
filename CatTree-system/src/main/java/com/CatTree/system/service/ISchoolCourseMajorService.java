@@ -17,7 +17,7 @@ public interface ISchoolCourseMajorService
      * @param courseId 课程专业关联主键
      * @return 课程专业关联
      */
-    public List<SchoolCourseMajor> selectSchoolCourseMajorByCourseId(Long courseId);
+    public SchoolCourseMajor selectSchoolCourseMajorByCourseId(Long courseId);
 
     /**
      * 查询课程专业关联列表

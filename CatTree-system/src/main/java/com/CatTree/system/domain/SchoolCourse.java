@@ -32,7 +32,8 @@ public class SchoolCourse extends BaseEntity
     private String teacherName;
 
     //专业
-    private Long[] majorId;
+    private Long majorId;
+
 
     private List<SchoolMajor> majorList;
     private List<SysUser> teacherList;
@@ -62,11 +63,12 @@ public class SchoolCourse extends BaseEntity
         this.teacherName = teacherName;
     }
 
-    public Long[] getMajorId() {
+
+    public Long getMajorId() {
         return majorId;
     }
 
-    public void setMajorId(Long[] majorId) {
+    public void setMajorId(Long majorId) {
         this.majorId = majorId;
     }
 
