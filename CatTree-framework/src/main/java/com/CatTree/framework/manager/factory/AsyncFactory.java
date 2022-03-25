@@ -11,9 +11,7 @@ import com.CatTree.common.utils.ip.AddressUtils;
 import com.CatTree.common.utils.ip.IpUtils;
 import com.CatTree.common.utils.spring.SpringUtils;
 import com.CatTree.system.domain.SysLogininfor;
-import com.CatTree.system.domain.SysOperLog;
 import com.CatTree.system.service.ISysLogininforService;
-import com.CatTree.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
 
 /**
@@ -80,23 +78,5 @@ public class AsyncFactory
         };
     }
 
-    /**
-     * 操作日志记录
-     *
-     * @param operLog 操作日志信息
-     * @return 任务task
-     */
-    public static TimerTask recordOper(final SysOperLog operLog)
-    {
-        return new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                // 远程查询操作地点
-                operLog.setOperLocation(AddressUtils.getRealAddressByIP(operLog.getOperIp()));
-                SpringUtils.getBean(ISysOperLogService.class).insertOperlog(operLog);
-            }
-        };
-    }
+
 }

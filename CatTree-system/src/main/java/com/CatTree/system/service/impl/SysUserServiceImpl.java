@@ -19,10 +19,8 @@ import com.CatTree.common.utils.SecurityUtils;
 import com.CatTree.common.utils.StringUtils;
 import com.CatTree.common.utils.bean.BeanValidators;
 import com.CatTree.common.utils.spring.SpringUtils;
-import com.CatTree.system.domain.SysPost;
 import com.CatTree.system.domain.SysUserPost;
 import com.CatTree.system.domain.SysUserRole;
-import com.CatTree.system.mapper.SysPostMapper;
 import com.CatTree.system.mapper.SysRoleMapper;
 import com.CatTree.system.mapper.SysUserMapper;
 import com.CatTree.system.mapper.SysUserPostMapper;
@@ -46,8 +44,6 @@ public class SysUserServiceImpl implements ISysUserService
     @Autowired
     private SysRoleMapper roleMapper;
 
-    @Autowired
-    private SysPostMapper postMapper;
 
     @Autowired
     private SysUserRoleMapper userRoleMapper;
@@ -163,12 +159,12 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public String selectUserPostGroup(String userName)
     {
-        List<SysPost> list = postMapper.selectPostsByUserName(userName);
-        if (CollectionUtils.isEmpty(list))
-        {
+//        List<SysPost> list = postMapper.selectPostsByUserName(userName);
+//        if (CollectionUtils.isEmpty(list))
+//        {
             return StringUtils.EMPTY;
-        }
-        return list.stream().map(SysPost::getPostName).collect(Collectors.joining(","));
+//        }
+//        return list.stream().map(SysPost::getPostName).collect(Collectors.joining(","));
     }
 
     /**
