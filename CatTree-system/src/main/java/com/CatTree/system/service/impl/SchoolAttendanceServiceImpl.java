@@ -99,7 +99,7 @@ public class SchoolAttendanceServiceImpl implements ISchoolAttendanceService {
                 schoolMajorUsers.stream().forEach(s -> {
                     SchoolAttendanceDetail schoolAttendanceDetail = new SchoolAttendanceDetail();
                     schoolAttendanceDetail.setUserId(s.getUserId());
-                    schoolAttendanceDetail.setStatus("未打卡");
+                    schoolAttendanceDetail.setStatus("未签到");
                     schoolAttendanceDetail.setAttendanceId(schoolAttendance.getAttendanceId());
                     schoolAttendanceDetail.setCreateTime(new Date());
                     schoolAttendanceDetail.setTeacherUserId(schoolAttendance.getTeacherUserId());

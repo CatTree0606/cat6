@@ -54,6 +54,8 @@ public class SysFaceController extends BaseController {
     private ISchoolAttendanceDetailService schoolAttendanceDetailService;
     @Autowired
     private ISchoolAttendanceService schoolAttendanceService;
+    @Autowired
+    private ISchoolAttendanceDetailService iSchoolAttendanceDetailService;
 
     //人脸新增
     @RequestMapping("/registerFace")
@@ -107,22 +109,7 @@ public class SysFaceController extends BaseController {
                 String userId = loginService.searchface(imagebast64);
                 SysUserFace sysUserFace1 = sysUserFaces.get(0);
                 if (StringUtils.isNotBlank(userId) && userId.equals(String.valueOf(sysUserFace1.getUserId()))) {
-                    SchoolAttendanceDetail schoolAttendanceDetail = schoolAttendanceDetailService.selectSchoolAttendanceDetailById(id);
-                    SchoolAttendance schoolAttendance = schoolAttendanceService.selectSchoolAttendanceByAttendanceId(schoolAttendanceDetail.getAttendanceId());
-                    Date date = new Date();
-                    boolean b = schoolAttendance.getCourseStart().getTime() < date.getTime();
-                    schoolAttendanceDetail.setStatus("已签到");
-                    schoolAttendanceDetail.setSignTime(date);
-                    schoolAttendanceDetail.setIsLate(b ? "是" : "否");
-                    schoolAttendanceDetailService.updateSchoolAttendanceDetail(schoolAttendanceDetail);
-
-                    Long signIn = schoolAttendance.getSignIn();
-                    signIn = signIn + new Long(1);
-                    Long noSignIn = schoolAttendance.getNoSignIn();
-                    noSignIn = noSignIn - new Long(1);
-                    schoolAttendance.setSignIn(signIn);
-                    schoolAttendance.setNoSignIn(noSignIn);
-                    schoolAttendanceService.updateSchoolAttendance(schoolAttendance);
+                    iSchoolAttendanceDetailService.signIn(id);
                     ajaxResult = AjaxResult.success();
                 } else {
                     ajaxResult = AjaxResult.error("人脸识别失败！");

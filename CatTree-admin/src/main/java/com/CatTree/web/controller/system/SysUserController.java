@@ -73,7 +73,10 @@ public class SysUserController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)
     {
-        List<SysUser> list = userService.selectUserList(user);
+        SysUser sysUser = new SysUser();
+        sysUser.setStudent("1");
+        List<SysUser> list = userService.listTeacher(sysUser);
+//        List<SysUser> list = userService.selectUserList(user);
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         util.exportExcel(response, list, "用户数据");
     }

@@ -13,6 +13,7 @@ import com.CatTree.common.utils.StringUtils;
 import com.CatTree.system.domain.SchoolAttendance;
 import com.CatTree.system.mapper.SchoolAttendanceMapper;
 import com.CatTree.system.mapper.SysUserMapper;
+import com.CatTree.system.service.ISchoolAttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.CatTree.system.mapper.SchoolAttendanceDetailMapper;
@@ -35,6 +36,8 @@ public class SchoolAttendanceDetailServiceImpl implements ISchoolAttendanceDetai
     private SysUserMapper sysUserMapper;
     @Autowired
     private SchoolAttendanceMapper schoolAttendanceMapper;
+    @Autowired
+    private ISchoolAttendanceService schoolAttendanceService;
 
     /**
      * 查询考勤明细
@@ -140,5 +143,45 @@ public class SchoolAttendanceDetailServiceImpl implements ISchoolAttendanceDetai
     public int deleteSchoolAttendanceDetailById(Long id)
     {
         return schoolAttendanceDetailMapper.deleteSchoolAttendanceDetailById(id);
+    }
+
+    @Override
+    public void signIn(Long id) {
+        SchoolAttendanceDetail schoolAttendanceDetail = this.selectSchoolAttendanceDetailById(id);
+        SchoolAttendance schoolAttendance = schoolAttendanceService.selectSchoolAttendanceByAttendanceId(schoolAttendanceDetail.getAttendanceId());
+        Date date = new Date();
+        boolean b = schoolAttendance.getCourseStart().getTime() < date.getTime();
+        schoolAttendanceDetail.setStatus("已签到");
+        schoolAttendanceDetail.setSignTime(date);
+        schoolAttendanceDetail.setIsLate(b ? "是" : "否");
+        this.updateSchoolAttendanceDetail(schoolAttendanceDetail);
+
+        Long signIn = schoolAttendance.getSignIn();
+        signIn = signIn + new Long(1);
+        Long noSignIn = schoolAttendance.getNoSignIn();
+        noSignIn = noSignIn - new Long(1);
+        schoolAttendance.setSignIn(signIn);
+        schoolAttendance.setNoSignIn(noSignIn);
+        schoolAttendanceService.updateSchoolAttendance(schoolAttendance);
+    }
+
+    @Override
+    public void cancelSignIn(Long id) {
+        SchoolAttendanceDetail schoolAttendanceDetail = this.selectSchoolAttendanceDetailById(id);
+        SchoolAttendance schoolAttendance = schoolAttendanceService.selectSchoolAttendanceByAttendanceId(schoolAttendanceDetail.getAttendanceId());
+        Date date = new Date();
+        boolean b = schoolAttendance.getCourseStart().getTime() < date.getTime();
+        schoolAttendanceDetail.setStatus("未签到");
+        schoolAttendanceDetail.setSignTime(null);
+        schoolAttendanceDetail.setIsLate(null);
+        schoolAttendanceDetailMapper.cancelSchoolAttendance(schoolAttendanceDetail);
+
+        Long signIn = schoolAttendance.getSignIn();
+        signIn = signIn - new Long(1);
+        Long noSignIn = schoolAttendance.getNoSignIn();
+        noSignIn = noSignIn + new Long(1);
+        schoolAttendance.setSignIn(signIn);
+        schoolAttendance.setNoSignIn(noSignIn);
+        schoolAttendanceService.updateSchoolAttendance(schoolAttendance);
     }
 }

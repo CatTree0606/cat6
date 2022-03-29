@@ -43,6 +43,8 @@ public interface SchoolAttendanceDetailMapper
      */
     public int updateSchoolAttendanceDetail(SchoolAttendanceDetail schoolAttendanceDetail);
 
+    void cancelSchoolAttendance(SchoolAttendanceDetail schoolAttendanceDetail);
+
     /**
      * 删除考勤明细
      *

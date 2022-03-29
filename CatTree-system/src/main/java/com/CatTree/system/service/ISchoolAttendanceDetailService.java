@@ -58,4 +58,8 @@ public interface ISchoolAttendanceDetailService
      * @return 结果
      */
     public int deleteSchoolAttendanceDetailById(Long id);
+
+    void signIn(Long id);
+
+    void cancelSignIn(Long id);
 }

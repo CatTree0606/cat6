@@ -87,6 +87,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="cancelSchoolAttendance" parameterType="SchoolAttendanceDetail">
+        update school_attendance_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="attendanceId != null">attendance_id = #{attendanceId},</if>
+            <if test="teacherUserId != null">teacher_user_id = #{teacherUserId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="status != null">status = #{status},</if>
+            is_late = #{isLate},
+            sign_time = #{signTime},
+            <if test="signType != null">sign_type = #{signType},</if>
+            <if test="signOut != null">sign_out = #{signOut},</if>
+            <if test="signOutTime != null">sign_out_time = #{signOutTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
     <delete id="deleteSchoolAttendanceDetailById" parameterType="Long">
         delete from school_attendance_detail where id = #{id}
     </delete>
