@@ -60,7 +60,7 @@ public class SysLoginService
     public String login(String username, String password, String code, String uuid)
     {
         boolean captchaOnOff = configService.selectCaptchaOnOff();
-        // 验证码开关
+        // 验证码开关，从redis中取到uuid对应的验证码code，判断与用户提交的code是否一致
         if (captchaOnOff)
         {
             validateCaptcha(username, code, uuid);
@@ -69,7 +69,7 @@ public class SysLoginService
         Authentication authentication = null;
         try
         {
-            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername，执行用户的身份验证
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
         }
